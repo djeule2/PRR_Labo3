@@ -9,7 +9,7 @@ type ElectionType struct {
 	Host 	string
 	Port 	int
 	Apt 	int
-	tabReq []int
+	Req []int
 	Pannes []PanneType
 }
 
@@ -17,5 +17,14 @@ var AllNetwork = make(map[int]ElectionType)
 
 type NetworkType struct {
 	Elections []ElectionType
+}
+
+func SetConfigNetwork()  {
+	confiNetwork := NetworkType{}
+
+	for k, v := range confiNetwork.Elections{
+		AllNetwork[k] = v
+	}
+
 }
 

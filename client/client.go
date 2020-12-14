@@ -22,8 +22,13 @@ func NewClient(id int, fromElection chan string, toElection chan string) *Client
 	client.id = id
 	client.toElection = toElection
 	client.fromElection = fromElection
-	client.demandeTimes = config.AllNetwork[id]
+	client.demandeTimes = config.AllNetwork[id].Req
 	return client
+}
+
+func (clent *Client) Exec()  {
+	go clent.getElu()
+	go clent.demande()
 }
 
 //getElu est une goroutine qui retourne l'election d'un nouveau processus.
@@ -39,6 +44,6 @@ func (client *Client) demande() {
 	for _, v := range client.demandeTimes {
 		time.Sleep(time.Duration(v)*time.Second)
 		utils.PrintMessage(client.id, clientName, "Demande election "+strconv.Itoa(v))
-		client.toElection <- config.DEMANDE
+		client.toElection <- config.ELECTION
 	}
 }
