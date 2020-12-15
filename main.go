@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-var waitFriend = &sync.WaitGroup{}
+var waitAllGroupe = &sync.WaitGroup{}
 
 type demandeReqType []int
 
@@ -55,10 +55,10 @@ func main()  {
 
 		net := network.NewNetwork(id, electionNetwork, networkElection, *el)
 
-		waitFriend.Add(1)
+		waitAllGroupe.Add(1)
 		go net.Exec()
 	}
 
-	waitFriend.Wait()
+	waitAllGroupe.Wait()
 
 }
