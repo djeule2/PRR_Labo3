@@ -13,7 +13,7 @@ type Sites struct {
 	Host 	string
 	Port 	int
 	Apt 	int
-	Req []int
+	Req     int
 	Pannes []PanneType
 }
 

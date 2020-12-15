@@ -133,7 +133,7 @@ func (network *Network) listenConn()  {
 		s := bufio.NewScanner(bytes.NewReader(buffer[0:n]))
 
 		for s.Scan(){
-			utils.PrintMessage(network.id, nameNet, "messagfe Receive : "+s.Text()+" from " +dest.String())
+			utils.PrintMessage(network.id, nameNet, "messagfe Receive : "+s.Text()+" from " + dest.String())
 			//if !network.enPanne{
 				network.fromNetwork <- s.Text()
 			//}

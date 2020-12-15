@@ -117,7 +117,7 @@ func (election *Election)demarre()  {
 }
 
 func (election *Election)receiveMessage(i int, apt int)  {
-	if election.enCours{
+	if !election.enCours{
 		election.demarre()
 	}
 	election.aps[i] = apt
@@ -132,11 +132,11 @@ func (election *Election)sendDemande(mess string, i int)  {
  */
 //receiveTimeOut permet de traiter la fin d'un processus
 func (election *Election)receiveTimeOut(tabApt []int)  {
-aptMax := election.moi
+aptMax := election.monApt
 
  for i, apt := range tabApt {
  	if aptMax == apt{
- 		election.elu =utils.Maximum(election.elu, i)
+ 		election.elu = utils.Maximum(election.elu, i)
 	} else {
 		aptMax = utils.Maximum(apt, aptMax)
 		if aptMax == apt{

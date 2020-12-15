@@ -12,7 +12,7 @@ type Client struct {
 	id int
 	fromElection chan string
 	toElection chan string
-	demandeTimes []int
+	demandeTimes int
 }
 
 //NewClient initialise nouveau client à partir de son id.
@@ -41,9 +41,10 @@ func (client *Client)getElu()  {
 
 //demande et une goroutine qui permet de faire  les demande de client pour une nouvelle election
 func (client *Client) demande() {
-	for _, v := range client.demandeTimes {
-		time.Sleep(time.Duration(v)*time.Second)
-		utils.PrintMessage(client.id, clientName, "Demande election "+strconv.Itoa(v))
+	time.Sleep(time.Duration(2)*time.Second)
+	for i := 0; i < client.demandeTimes; i++ {
+		//time.Sleep(time.Duration(v)*time.Second)
+		utils.PrintMessage(client.id, clientName, "Demande election "+strconv.Itoa(i))
 		client.toElection <- config.ELECTION
 	}
 }
