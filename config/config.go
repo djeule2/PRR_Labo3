@@ -1,11 +1,15 @@
 package config
 
+import (
+	"github.com/tkanos/gonfig"
+)
+
 type PanneType struct {
 	Start 	int
 	End 	int
 }
 
-type ElectionType struct {
+type Sites struct {
 	Host 	string
 	Port 	int
 	Apt 	int
@@ -13,16 +17,23 @@ type ElectionType struct {
 	Pannes []PanneType
 }
 
-var AllNetwork = make(map[int]ElectionType)
+var AllNetwork = make(map[int]Sites)
 
 type NetworkType struct {
-	Elections []ElectionType
+	Sites []Sites
 }
 
 func SetConfigNetwork()  {
-	confiNetwork := NetworkType{}
+	configNetwork := NetworkType{}
 
-	for k, v := range confiNetwork.Elections{
+	err := gonfig.GetConf("config/configNetworkBully.json",
+		&configNetwork)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for k, v := range configNetwork.Sites{
 		AllNetwork[k] = v
 	}
 

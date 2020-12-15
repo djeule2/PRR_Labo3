@@ -41,6 +41,7 @@ func (r *demandeReqType)Set(s string) error {
 }
 
 func main()  {
+	config.SetConfigNetwork()
 	fmt.Println(config.AllNetwork)
 	for id, _ := range config.AllNetwork {
 		clientElection := make(chan string)
