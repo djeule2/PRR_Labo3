@@ -97,7 +97,7 @@ func (network *Network) getMessage() {
 				}
 			case msg := <- network.fromNetwork:
 				utils.PrintMessage(network.id, nameNet, "Sending message to processus Election")
-				go func() {network.toElection <- msg}()
+				network.toElection <- msg
 		}
 
 	}
