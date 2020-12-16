@@ -30,7 +30,7 @@ type Election struct {
 	toNetwork chan string
 }
 
-const nameElc = "ELC-"
+const nameElc = " elc "
 
 //NewElection permet d'initialiser un nouveau processus Election à partir de son id,
 //par ailleurs  on initialise quatre channels pour communiquer avec le client et avec le reseau.
@@ -107,10 +107,7 @@ func (election *Election)demarre()  {
 	election.aps[election.moi] = election.monApt
 	tabMess := []string{fmt.Sprint(election.moi), fmt.Sprint(election.monApt)}
 	messageSent := strings.Join(tabMess, config.TIRET)
-	/*
-	for _, i := range election.aps{
-		election.sendDemande(messageSent, i)
-	}*/
+
 	election.sendMessageToNetwork(messageSent)
 	timeDelay := 2 * config.T*time.Millisecond
 	election.endTime = time.After(timeDelay)
@@ -123,13 +120,7 @@ func (election *Election)receiveMessage(i int, apt int)  {
 	election.aps[i] = apt
 
 }
-/*
-func (election *Election)sendDemande(mess string, i int)  {
-  if i != election.moi {
-	  election.sendMessageToNetwork(mess)
-  }
-}
- */
+
 //receiveTimeOut permet de traiter la fin d'un processus
 func (election *Election)receiveTimeOut(tabApt []int)  {
 aptMax := election.monApt

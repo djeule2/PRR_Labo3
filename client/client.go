@@ -26,9 +26,9 @@ func NewClient(id int, fromElection chan string, toElection chan string) *Client
 	return client
 }
 
-func (clent *Client) Exec()  {
-	go clent.getElu()
-	go clent.demande()
+func (client *Client) Exec()  {
+	go client.getElu()
+	go client.demande()
 }
 
 //getElu est une goroutine qui retourne l'election d'un nouveau processus.

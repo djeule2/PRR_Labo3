@@ -1,9 +1,9 @@
 package network
 
 import (
+	"../config"
 	"../election"
 	"../utils"
-	"../config"
 	"bufio"
 	"bytes"
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 )
-const nameNet = "net"
+const nameNet = " net "
 
 type Network struct {
 	id 	int
@@ -38,8 +38,8 @@ func NewNetwork(id int, fromElection chan string, toElection chan string, electi
 	network.toElection = toElection
 	network.fromNetwork = make(chan string)
 	network.toNetwork = make(chan string)
-	network.conns = make(map[int]net.Conn)
 	network.election = election
+	network.conns = make(map[int]net.Conn)
 
 	return network
 }
@@ -54,11 +54,11 @@ func (network *Network)Exec()  {
 
 // la fonction connect lance le processus de connection d'un processus à tous les autres processus définit dans le systeme.
 func (network *Network) connect() {
-	utils.PrintMessage(network.id, nameNet, "Network connecting to others")
+	utils.PrintMessage(network.id, nameNet, "Network connecting to others processus")
 	for k, v := range config.AllNetwork{
 		if k != network.id{
-			addresse := v.Host + ":" + fmt.Sprint(v.Port)
-			network.conns[k] = network.connectTo(addresse)
+			address := v.Host + ":" + fmt.Sprint(v.Port)
+			network.conns[k] = network.connectTo(address)
 		}
 	}
 
@@ -67,10 +67,13 @@ func (network *Network) connect() {
 //la fonction connecTo permet de connecter un processus à un autre spécique défini par l'adresse passé en paramètre
 func (network *Network)connectTo(adresse string) net.Conn {
 	conn, err := net.Dial("udp", adresse)
+
 	utils.PrintMessage(network.id, nameNet, " Connected to: "+adresse)
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return conn
 }
 
@@ -79,7 +82,6 @@ func (network *Network) getMessage() {
 		select {
 			//Gère les arrivé des message du processus election
 			//les message sont ensuite transmis aux autre site
-
 
 			case msg := <- network.fromElection:
 				utils.PrintMessage(network.id, nameNet, "message received from mutex : "+msg)
@@ -104,66 +106,48 @@ func (network *Network) getMessage() {
 
 func (network *Network)sendMessage(conn net.Conn, msg string)  {
 	_, err := conn.Write([]byte(msg))
+
 	utils.PrintMessage(network.id, nameNet, "Sending message to "+ fmt.Sprint(conn.RemoteAddr())+" : "+msg)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 //la fonction ListenConn permetra écouter le message qui arrive à notre adresse.
 // pour chaque message on l'envois au processus election
-func (network *Network) listenConn()  {
-	moi := config.AllNetwork[network.id]
-	addresse := moi.Host + " : " + fmt.Sprint(moi.Port)
+func (network *Network) listenConn() {
+	me := config.AllNetwork[network.id]
+	addr := me.Host + ":" + fmt.Sprint(me.Port)
 
-	conn, err := net.ListenPacket("udp", addresse)
+
+	conn, err := net.ListenPacket("udp", addr)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer conn.Close()
-	utils.PrintMessage(network.id, nameNet, "Listen to "+ fmt.Sprint(conn.LocalAddr()))
+
+	utils.PrintMessage(network.id, nameNet,
+		"Listenting to "+fmt.Sprint(conn.LocalAddr()))
+
 	buffer := make([]byte, 4096)
+
 	for {
 		n, dest, err := conn.ReadFrom(buffer)
-		if err != nil{
+		if err != nil {
 			log.Fatal(err)
 		}
-		time.Sleep(config.T*time.Millisecond)
+
+		 time.Sleep(config.T * time.Millisecond)
 		s := bufio.NewScanner(bytes.NewReader(buffer[0:n]))
 
-		for s.Scan(){
-			utils.PrintMessage(network.id, nameNet, "messagfe Receive : "+s.Text()+" from " + dest.String())
-			//if !network.enPanne{
-				network.fromNetwork <- s.Text()
-			//}
-		}
-
-	}
-
-
-}
-
-/*
-
-func (netword *Network) pannes(){
-	chrono := 0
-	pannes := config.AllNetwork[netword.id].Pannes
-	panneCourante := 0
-
-	for panneCourante < len(pannes){
-		p := pannes[panneCourante]
-
-		if !netword.enPanne && p.Start == chrono {
-			netword.enPanne = true
-			utils.PrintMessage(netword.id, nameNet, "je suis en panne à t = "+strconv.Itoa(chrono))
-
-		} else if netword.enPanne && p.End == chrono {
-			netword.enPanne = false
+		for s.Scan() {
+			utils.PrintMessage(network.id, nameNet, "Received message : "+
+				s.Text()+" from "+dest.String())
+			network.fromNetwork <- s.Text()
 
 		}
 	}
-
 }
 
- */
